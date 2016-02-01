@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title><![CDATA[Hexo]]></title>
-  
+  <title><![CDATA[SmallBig's Recycle]]></title>
+  <subtitle><![CDATA[read->code->life->die]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
   <updated>2016-02-01T04:07:05.494Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
-    <name><![CDATA[John Doe]]></name>
-    
+    <name><![CDATA[SmallBig]]></name>
+    <email><![CDATA[xian.small.b@gmail.com]]></email>
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
