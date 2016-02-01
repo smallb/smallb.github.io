@@ -4,7 +4,7 @@
   <subtitle><![CDATA[read->code->life->die]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2016-02-01T04:07:05.494Z</updated>
+  <updated>2016-02-01T06:18:33.917Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,23 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[只是创建随笔tag]]></title>
+    <link href="http://yoursite.com/2016/02/01/%E5%8F%AA%E6%98%AF%E5%88%9B%E5%BB%BA%E9%9A%8F%E7%AC%94tag/"/>
+    <id>http://yoursite.com/2016/02/01/只是创建随笔tag/</id>
+    <published>2016-02-01T06:09:30.000Z</published>
+    <updated>2016-02-01T06:18:33.917Z</updated>
+    <content type="html"><![CDATA[<p>只是创建tag….</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>只是创建tag….</p>
+]]>
+    </summary>
+    
+      <category term="随笔" scheme="http://yoursite.com/tags/%E9%9A%8F%E7%AC%94/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Hello World]]></title>
