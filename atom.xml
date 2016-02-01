@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title><![CDATA[SmallBig's Recycle]]></title>
-  <subtitle><![CDATA[read->code->life->die]]></subtitle>
+  <subtitle><![CDATA[SmallBig的垃圾回收站]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
   <updated>2016-02-01T06:18:33.917Z</updated>
