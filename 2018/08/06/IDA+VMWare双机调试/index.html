@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="SmallBig的博客">
+    <meta name="keyword"  content="Windows | kernel | debug | golang | c++ | python">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        IDA+VMWare双机调试 - SmallBig的博客 | SmallBig&#39;s Blog
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> code is live, live is evil </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>SmallBig</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archive">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#设置"><span class="toc-text">设置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#虚拟机设置"><span class="toc-text">虚拟机设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IDA设置"><span class="toc-text">IDA设置</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#启动虚拟机"><span class="toc-text">启动虚拟机</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#虚拟机系统文件"><span class="toc-text">虚拟机系统文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IDA附加VMWare"><span class="toc-text">IDA附加VMWare</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i> code is live, live is evil </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        IDA+VMWare双机调试
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2018-08-06 16:30:37</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#IDA" title="IDA">IDA</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#VMWare" title="VMWare">VMWare</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#调试" title="调试">调试</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h1 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h1><h2 id="虚拟机设置"><a href="#虚拟机设置" class="headerlink" title="虚拟机设置"></a>虚拟机设置</h2><p>打开虚拟机vmx文件增加下面</p>
+<p>例如：D:\VMwareOS\Windows 7 x64\Windows 7 x64.vmx</p>
+<p>debugStub.listen.guest32.remote = “TRUE”<br>debugStub.listen.guest64.remote = “TRUE”<br>debugStub.listen.guest64 = “TRUE”<br>debugStub.hideBreakpoints = “TRUE”</p>
+<p>注意：<br>32位系统改成这个<br>debugStub.listen.guest32 = “TRUE”<br>64位系统对应这个<br>debugStub.listen.guest64 = “TRUE”</p>
+<h2 id="IDA设置"><a href="#IDA设置" class="headerlink" title="IDA设置"></a>IDA设置</h2><p>打开pdb.cfg文件。一般在IDA 6.8\cfg\pdb.cfg<br>修改成自己的符号表路径就好。<br><img src="https://gitee.com/SmallBig/images/raw/master/IDA+VMWare%E5%8F%8C%E5%87%BB%E8%B0%83%E8%AF%95/idapdb.png" alt=""></p>
+<h1 id="启动虚拟机"><a href="#启动虚拟机" class="headerlink" title="启动虚拟机"></a>启动虚拟机</h1><h2 id="虚拟机系统文件"><a href="#虚拟机系统文件" class="headerlink" title="虚拟机系统文件"></a>虚拟机系统文件</h2><p>将虚拟机里面系统的文件复制到物理机<br>例如：虚拟机里面的 C:/windows/system32 复制到 物理机的 D:/VMWareSystem/System32</p>
+<p>假如不想整个复制的话(- - 主要太大..)</p>
+<p>可以复制必要的需要解析的文件。<br>例如：虚拟机里面的 C:/windows/system32 下的所有nt*.exe，hal.dll，drivers文件夹</p>
+<h2 id="IDA附加VMWare"><a href="#IDA附加VMWare" class="headerlink" title="IDA附加VMWare"></a>IDA附加VMWare</h2><p>1 打开ida<br><img src="https://gitee.com/SmallBig/images/raw/master/IDA+VMWare%E5%8F%8C%E5%87%BB%E8%B0%83%E8%AF%95/idastart.png" alt=""></p>
+<p>2 附加VMWare进程<br><img src="https://gitee.com/SmallBig/images/raw/master/IDA+VMWare%E5%8F%8C%E5%87%BB%E8%B0%83%E8%AF%95/idaattach.png" alt=""></p>
+<p>3 选择端口，注意port，假如系统是32位，port应该是 8832，64位是8864<br><img src="https://gitee.com/SmallBig/images/raw/master/IDA+VMWare%E5%8F%8C%E5%87%BB%E8%B0%83%E8%AF%95/idadebugoptions.png" alt=""></p>
+<p>4 选择显示的内存<br><img src="https://gitee.com/SmallBig/images/raw/master/IDA+VMWare%E5%8F%8C%E5%87%BB%E8%B0%83%E8%AF%95/idamemory.png" alt=""></p>
+<p>5 增加显示，全F的话。会提示错误。<br><img src="https://gitee.com/SmallBig/images/raw/master/IDA+VMWare%E5%8F%8C%E5%87%BB%E8%B0%83%E8%AF%95/idamemoryaddress.png" alt=""></p>
+<p>双击这一行<br><img src="https://gitee.com/SmallBig/images/raw/master/IDA+VMWare%E5%8F%8C%E5%87%BB%E8%B0%83%E8%AF%95/idareadmemory.png" alt=""></p>
+<p>6 运行python脚本</p>
+<p>去github下载 <a href="https://github.com/Cr4sh/IDA-VMware-GDB" target="_blank" rel="noopener">https://github.com/Cr4sh/IDA-VMware-GDB</a><br>此python只支持windows7</p>
+<p>对应复制出来的文件夹<br>修改里面的这行：SYSTEM32_COPY_PATH = “D:\VMWareSystem\System32”</p>
+<p>修改完之后，回到IDA</p>
+<p><img src="https://gitee.com/SmallBig/images/raw/master/IDA+VMWare%E5%8F%8C%E5%87%BB%E8%B0%83%E8%AF%95/idascript.png" alt=""></p>
+<p><img src="https://gitee.com/SmallBig/images/raw/master/IDA+VMWare%E5%8F%8C%E5%87%BB%E8%B0%83%E8%AF%95/idascript2.png" alt=""></p>
+<p>7 假如py报错，只能自己解决了，或者留言一起抢救一下。</p>
+
+        
+            <div class="donate-container">
+    <div class="donate-button">
+        <button id="donate-button">赞赏</button>
+    </div>
+    <div class="donate-img-container hide" id="donate-img-container">
+        <img id="donate-img" src="" data-src="/img/donate.jpg">
+        <p> 感谢鼓励 </p>
+    </div>
+</div>
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+        <li>
+            <a target="_blank" href="http://weibo.com/羡小b">
+                            <span class="fa-stack fa-lg">
+                                  <i class="iconfont icon-weibo"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+
+        
+        <li>
+            <a target="_blank"  href="https://github.com/smallb">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<script src="/js/gitment.js"></script>
+<script>
+    var gitment = new Gitment({
+        id: 'IDA+VMWare双机调试',
+        owner: 'smallb',
+        repo: 'smallb.github.io',
+        oauth: {
+            client_id: '41842bce26bf47e12651',
+            client_secret: 'd088ba30086cb199d82a0a2c2b344c57c56ab7b4',
+        },
+    })
+    gitment.render('comment-container')
+</script>
+
+</html>
