@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="SmallBig的博客">
+    <meta name="keyword"  content="Windows | kernel | debug | golang | c++ | python">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        python自动化分析dump - SmallBig的博客 | SmallBig&#39;s Blog
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> code is live, live is evil </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>SmallBig</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archive">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#cdb是什么"><span class="toc-text">cdb是什么</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#python脚本"><span class="toc-text">python脚本</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i> code is live, live is evil </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        python自动化分析dump
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2018-08-08 14:25:02</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#调试" title="调试">调试</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#python" title="python">python</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>崩溃系统上面的minidump需要快速定位崩溃点，由于量比较大，不可能人工一个个去看。秉着机械化的操作让机器去做的准则，调用windbg自带cdb来完成需求。完成的效果还不错，现在发出来让有同样需求的同学。</p>
+<h1 id="cdb是什么"><a href="#cdb是什么" class="headerlink" title="cdb是什么"></a>cdb是什么</h1><p>cdb是windbg工具集里面的一个工具，可以用于命令行模式调用windbg来调试<br>微软的文档有说明<a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/cdb-command-line-options" target="_blank" rel="noopener">点击这里: cdb命令</a></p>
+<blockquote>
+<p>cdb  [ -server ServerTransport | -remote ClientTransport ]<br>[ -premote SmartClientTransport ] [-log{a|au|o|ou} LogFile]<br>[-2] [-d] [-ddefer] [-g] [-G] [-hd] [-lines] [-myob] [-bonc]<br>[-n] [-o] [-s] [-v] [-w] [-cf “filename”] [-cfr “filename”] [-c “command”]<br>[-robp] [-r BreakErrorLevel] [-t PrintErrorLevel]<br>[ -x{e|d|n|i} Exception ] [-x] [-clines lines]<br>[-i ImagePath]  [-y SymbolPath] [-srcpath SourcePath]<br>[-aExtension] [-failinc] [-noio] [-noinh] [-noshell] [-nosqm]<br>[-sdce] [-ses] [-sicv] [-sins] [-snc] [-snul] [-zp PageFile]<br>[-sup] [-sflags 0xNumber] [-ee {masm|c++}]<br>[-e Event] [-pb] [-pd] [-pe] [-pr] [-pt Seconds] [-pv]<br>[ – | -p PID | -pn Name | -psn ServiceName | -z DumpFile | executable ]<br>[-cimp] [-isd] [-kqm] [-pvr] [-version] [-vf] [-vf:\<opts>] [-netsyms:{yes|no}]</opts></p>
+<p>cdb -iae </p>
+<p>cdb -iaec KeyString </p>
+<p>cdb -iu KeyString</p>
+<p>cdb -QR Server </p>
+<p>cdb -wake pid </p>
+<p>cdb -?</p>
+</blockquote>
+<p>本例子用到的命令如下：<br>-z dmp文件路径，如：”d:\dump\test.dmp”<br>-y 符号路径，如：”srv<em>f:\symbols</em><a href="https://msdl.microsoft.com/download/symbols&quot;" target="_blank" rel="noopener">https://msdl.microsoft.com/download/symbols&quot;</a><br>-c windbg的命令，如：”!analyze -v”</p>
+<p>其他用法请参考微软文档。</p>
+<h1 id="python脚本"><a href="#python脚本" class="headerlink" title="python脚本"></a>python脚本</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">local_symbol_path = <span class="string">r"f:\symbols"</span></span><br><span class="line"></span><br><span class="line">cdb_exe_path = <span class="string">r"C:\Program Files (x86)\Windows Kits\10\Debuggers\x86\cdb.exe"</span></span><br><span class="line">windows_symbol_path = <span class="string">r"srv*%s*https://msdl.microsoft.com/download/symbols"</span> % local_symbol_path</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run_command</span><span class="params">(sym_path,dmp_file)</span>:</span></span><br><span class="line">    cdb_command = <span class="string">".reload; !analyze -v;"</span></span><br><span class="line">    cdb_command += <span class="string">".printf\"\\n==================== 当前异常现场 ====================\\n\"; .excr;"</span></span><br><span class="line">    cdb_command += <span class="string">".printf\"\\n==================== 异常线程堆栈 ====================\\n\"; kv;"</span></span><br><span class="line">    cdb_command += <span class="string">".printf\"\\n==================== 所有线程堆栈 ====================\\n\"; ~* kv;"</span></span><br><span class="line">    cdb_command += <span class="string">"q"</span></span><br><span class="line">    arguments = [<span class="string">'-z'</span>, dmp_file, <span class="string">'-y'</span>, sym_path, <span class="string">'-c'</span>, cdb_command]</span><br><span class="line">    output = subprocess.check_output([cdb_exe_path] + arguments)</span><br><span class="line">    print(output)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) &lt; <span class="number">2</span>:</span><br><span class="line">        print(<span class="string">"input dmp path!"</span>)</span><br><span class="line">        sys.exit()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> os.path.exists(sys.argv[<span class="number">1</span>]):</span><br><span class="line">        run_command(windows_symbol_path, sys.argv[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p>直接用就能输出分析后的内容，首次加载符号表可能会有点慢请稍等。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python analyze.py <span class="string">"d:\dump\test.dmp"</span></span><br></pre></td></tr></table></figure></p>
+
+        
+            <div class="donate-container">
+    <div class="donate-button">
+        <button id="donate-button">赞赏</button>
+    </div>
+    <div class="donate-img-container hide" id="donate-img-container">
+        <img id="donate-img" src="" data-src="/img/alipay.png">
+        <p> 感谢支持(支付宝) </p>
+    </div>
+</div>
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+        <li>
+            <a target="_blank" href="http://weibo.com/羡小b">
+                            <span class="fa-stack fa-lg">
+                                  <i class="iconfont icon-weibo"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+
+        
+        <li>
+            <a target="_blank"  href="https://github.com/smallb">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<script src="/js/gitment.js"></script>
+<script>
+    var gitment = new Gitment({
+        id: 'python自动化分析dump',
+        owner: 'smallb',
+        repo: 'smallb.github.io',
+        oauth: {
+            client_id: '41842bce26bf47e12651',
+            client_secret: 'd088ba30086cb199d82a0a2c2b344c57c56ab7b4',
+        },
+    })
+    gitment.render('comment-container')
+</script>
+
+</html>
