@@ -6,7 +6,7 @@
     <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="SmallBig的博客">
-    <meta name="keyword"  content="Windows | kernel | debug | golang | c++ | python">
+    <meta name="keyword"  content="">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>
@@ -44,7 +44,7 @@
         
 <div class="nav" id="nav">
     <div class="avatar-name">
-        <div class="avatar">
+        <div class="avatar ">
             <img src="/img/avatar.jpg" />
         </div>
         <div class="name">
@@ -103,6 +103,7 @@
         </div>
     </div>
 </div>
+
         <div class="index-about-mobile">
             <i> code is live, live is evil </i>
         </div>
@@ -112,19 +113,21 @@
         <!-- Main Content -->
         
 <div class="post-content ">
-    <h1 id="code-is-live-live-is-evil"><a href="#code-is-live-live-is-evil" class="headerlink" title="code is live, live is evil"></a>code is live, live is evil</h1>
+    
     
         <div class="donate-container">
     <div class="donate-button">
         <button id="donate-button">赞赏</button>
     </div>
     <div class="donate-img-container hide" id="donate-img-container">
-        <img id="donate-img" src="" data-src="/img/alipay.png">
-        <p> 感谢支持(支付宝) </p>
+        <img id="donate-img" src="" data-src="/img/alipay.jpg">
+        <p> 感谢鼓励 </p>
     </div>
 </div>
     
     <div id="comment-container">
+    </div>
+    <div id="lv-container">
     </div>
 </div>
 
@@ -138,25 +141,9 @@
         
 
         
-        <li>
-            <a target="_blank" href="http://weibo.com/羡小b">
-                            <span class="fa-stack fa-lg">
-                                  <i class="iconfont icon-weibo"></i>
-                            </span>
-            </a>
-        </li>
-        
 
         
 
-        
-        <li>
-            <a target="_blank"  href="https://github.com/smallb">
-                            <span class="fa-stack fa-lg">
-                                <i class="iconfont icon-github"></i>
-                            </span>
-            </a>
-        </li>
         
 
         
@@ -166,10 +153,7 @@
     <p>
         <span>/</span>
         
-        <span><a href="#">友情链接:</a></span>
-        <span>/</span>
-        
-        <span><a href="https://meesong.github.io/StaticBlog/">MeeSong&#39;s Blog</a></span>
+        <span><a href="#">SEO</a></span>
         <span>/</span>
         
     </p>
@@ -197,20 +181,28 @@
 </script>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <script src="/js/index.js"></script>
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
-<script src="/js/gitment.js"></script>
-<script>
-    var gitment = new Gitment({
-        id: 'About',
-        owner: 'smallb',
-        repo: 'smallb.github.io',
-        oauth: {
-            client_id: '41842bce26bf47e12651',
-            client_secret: 'd088ba30086cb199d82a0a2c2b344c57c56ab7b4',
-        },
-    })
-    gitment.render('comment-container')
-</script>
+
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+        */
+        if( '' || '')
+        var disqus_config = function () {
+            this.page.url = '';  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = ''; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://smallb.github.io/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+
+
 
 </html>
