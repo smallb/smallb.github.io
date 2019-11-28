@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="SmallBig的博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        多线程使用对象引发jvm崩溃 - SmallBig的博客 | SmallBig&#39;s Blog
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> code is live, live is evil </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/img/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>SmallBig</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archive">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#解决方法"><span class="toc-text">解决方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#崩溃现场"><span class="toc-text">崩溃现场</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#线程"><span class="toc-text">线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#堆栈"><span class="toc-text">堆栈</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#调试过程"><span class="toc-text">调试过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题：为什么rax会赋值随机值"><span class="toc-text">问题：为什么rax会赋值随机值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#答案"><span class="toc-text">答案</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> code is live, live is evil </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        多线程使用对象引发jvm崩溃
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-11-28 17:45:24</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#调试" title="调试">调试</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>原因：多线程全局使用FindClass找到的对象时候，没有调用NewGlobalRef</p>
+<p>解决：FindClass之后调用NewGlobalRef转成全局jclass，记住结束的时候需要调用DeleteGlobalRef解除引用</p>
+<p>下面是分析过程，不感兴趣的可以不看了。</p>
+<h2 id="崩溃现场"><a href="#崩溃现场" class="headerlink" title="崩溃现场"></a>崩溃现场</h2><h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">---------------  T H R E A D  ---------------</span><br><span class="line"></span><br><span class="line">Current thread (0x0000000002bbe000):  JavaThread &quot;main&quot; [_thread_in_vm, id=17356, stack(0x0000000002aa0000,0x0000000002ba0000)]</span><br><span class="line"></span><br><span class="line">siginfo: ExceptionCode=0xc0000005, reading address 0xffffffffffffffff</span><br><span class="line"></span><br><span class="line">Registers:</span><br><span class="line">RAX=0xdef27c76c186ca56, RBX=0x0000000002bbe000, RCX=0x000000066b134260, RDX=0x0000000000000000</span><br><span class="line">RSP=0x0000000002b9ec90, RBP=0x0000000002b9ed69, RSI=0x0000000038a789a8, RDI=0x0000000000000000</span><br><span class="line">R8 =0x0000000002bbe000, R9 =0x0000000000000000, R10=0x000000006e048eb0, R11=0x0000000002b9eca0</span><br><span class="line">R12=0x0000000000000001, R13=0x0000000000000000, R14=0x0000000002bbe1f8, R15=0x0000000000000001</span><br><span class="line">RIP=0x000000006d9ffb53, EFLAGS=0x0000000000010246</span><br></pre></td></tr></table></figure>
+<h3 id="堆栈"><a href="#堆栈" class="headerlink" title="堆栈"></a>堆栈</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Stack: [0x0000000002aa0000,0x0000000002ba0000],  sp=0x0000000002b9ec90,  free space=1019k</span><br><span class="line">Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)</span><br><span class="line">V  [jvm.dll+0x15fb53]</span><br><span class="line">C  [xxxxjni.dll+0x3a48a]</span><br><span class="line">C  [xxxxjni.dll+0x3a7a4]</span><br><span class="line">C  [xxxxjni.dll+0x581fe]</span><br><span class="line">C  [xxxxjni.dll+0x550e7]</span><br><span class="line">C  [xxxxjni.dll+0x3de4c]</span><br><span class="line">C  [xxxxjni.dll+0x3b41e]</span><br><span class="line">C  0x0000000002cd8c67</span><br></pre></td></tr></table></figure>
+<h2 id="调试过程"><a href="#调试过程" class="headerlink" title="调试过程"></a>调试过程</h2><p>通过windbg附加崩溃程序，转到jvm最后崩溃点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">0:025&gt; u jvm.dll+0x15fb53</span><br><span class="line">jvm!JNI_CreateJavaVM+0x1383:</span><br><span class="line">00000000`6d9ffb53 4c8b08          mov     r9,qword ptr [rax]</span><br><span class="line">00000000`6d9ffb56 488bc8          mov     rcx,rax</span><br><span class="line">00000000`6d9ffb59 41ff91b8000000  call    qword ptr [r9+0B8h]</span><br><span class="line">00000000`6d9ffb60 488bf0          mov     rsi,rax</span><br><span class="line">00000000`6d9ffb63 48397b08        cmp     qword ptr [rbx+8],rdi</span><br><span class="line">00000000`6d9ffb67 0f849d000000    je      jvm!JNI_CreateJavaVM+0x143a (00000000`6d9ffc0a)</span><br><span class="line">00000000`6d9ffb6d 48397c2428      cmp     qword ptr [rsp+28h],rdi</span><br><span class="line">00000000`6d9ffb72 740a            je      jvm!JNI_CreateJavaVM+0x13ae (00000000`6d9ffb7e)</span><br></pre></td></tr></table></figure>
+<p>结合崩溃现场的线程信息，可以得知崩溃的时候，[rax = 0xdef27c76c186ca56] rax被赋值了随机值，然后read时候，直接爆炸了…</p>
+<h3 id="问题：为什么rax会赋值随机值"><a href="#问题：为什么rax会赋值随机值" class="headerlink" title="问题：为什么rax会赋值随机值"></a>问题：为什么rax会赋值随机值</h3><p>结合源码分析，发现调用 jvm!JNI_CreateJavaVM 过程：</p>
+<p>业务代码 -&gt; NewObject -&gt; NewObjectV -&gt; jvm!JNI_CreateJavaVM</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">jobject resultObj = env-&gt;NewObject(gCls, gMethod, obj);</span><br><span class="line"></span><br><span class="line"><span class="function">jobject <span class="title">NewObject</span><span class="params">(jclass clazz, jmethodID methodID, ...)</span> </span>&#123;</span><br><span class="line">        va_list args;</span><br><span class="line">        jobject result;</span><br><span class="line">        va_start(args, methodID);</span><br><span class="line">        result = functions-&gt;NewObjectV(<span class="keyword">this</span>,clazz,methodID,args);</span><br><span class="line">        va_end(args);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="function">jobject <span class="title">NewObjectV</span><span class="params">(jclass clazz, jmethodID methodID,</span></span></span><br><span class="line"><span class="function"><span class="params">                    va_list args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> functions-&gt;NewObjectV(<span class="keyword">this</span>,clazz,methodID,args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面是正常情况下的执行流程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">00000000`6d9ea696 488b0b          mov     rcx,qword ptr [rbx]</span><br><span class="line">00000000`6d9ea699 e872eaf1ff      call    jvm!JVM_GetManagementExt+0x44f20 (00000000`6d909110)</span><br><span class="line">00000000`6d9ea69e 4c8bc7          mov     r8,rdi</span><br><span class="line">00000000`6d9ea6a1 33d2            xor     edx,edx</span><br><span class="line">00000000`6d9ea6a3 488bd8          mov     rbx,rax</span><br><span class="line">00000000`6d9ea6a6 488b00          mov     rax,qword ptr [rax] ds:00000007`c0060a18=&#123;jvm!InstanceKlass::`vftable&apos; (00000000`6dea6728)&#125;</span><br><span class="line">00000000`6d9ea6a9 488bcb          mov     rcx,rbx</span><br><span class="line">00000000`6d9ea6ac ff5078          call    qword ptr [rax+78h]</span><br><span class="line">00000000`6d9ea6af 48837f0800      cmp     qword ptr [rdi+8],0</span><br></pre></td></tr></table></figure>
+<p>可以看到00000000`6d9ea6a6这行，rax是vftable这种虚表。</p>
+<p>rax由00000000`6d9ea699此行的函数赋值，进去看看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0:003&gt; u 00000000`6d909110</span><br><span class="line">jvm!JVM_GetManagementExt+0x44f20:</span><br><span class="line">00000000`6d909110 48630561277900  movsxd  rax,dword ptr [jvm!gHotSpotVMLongConstantEntryArrayStride+0x39b78 (00000000`6e09b878)]</span><br><span class="line">00000000`6d909117 488b0408        mov     rax,qword ptr [rax+rcx]</span><br></pre></td></tr></table></figure>
+<p>就两句代码。从gHotSpotVMLongConstantEntryArrayStride里面获取下表，然后加上rcx，取值返回。</p>
+<p>那就可以看00000000`6d9ea696这行的rbx哪里赋值了。</p>
+<p>经过调试发现，rbx其实就是 *gCls 的值。</p>
+<p>结合上述逻辑，转成 C 的伪代码那就是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rax = *((*gCls) + gHotSpotVMLongConstantEntryArrayStride)</span><br></pre></td></tr></table></figure>
+<p>正常情况下rax是不会变的，那么崩溃的时候rax确实是变化，那就证明：<br>gcls指向的那一片内存中，发生了变动。要找到这种变动发生的地方，可以直接下内存写入断点，找到哪里修改了内存。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">0:003&gt; ba w1 00000006`6b134260</span><br><span class="line">0:003&gt; g</span><br><span class="line">Breakpoint 0 hit</span><br><span class="line">msvcr100!memset+0x8b:</span><br><span class="line">00000000`6e18c36b 4883c140        add     rcx,40h</span><br><span class="line">0:036&gt; k</span><br><span class="line"> # Child-SP          RetAddr           Call Site</span><br><span class="line">00 00000000`3dfdefd8 00000000`6d996a4e msvcr100!memset+0x8b</span><br><span class="line">01 00000000`3dfdefe0 00000000`6d996a95 jvm!JVM_GetManagementExt+0xd285e</span><br><span class="line">02 00000000`3dfdf010 00000000`6d9dcbe0 jvm!JVM_GetManagementExt+0xd28a5</span><br><span class="line">03 00000000`3dfdf040 00000000`6d957bff jvm!JVM_GetManagementExt+0x1189f0</span><br><span class="line">04 00000000`3dfdf080 00000000`031c685a jvm!JVM_GetManagementExt+0x93a0f</span><br></pre></td></tr></table></figure>
+<p>通过内存写入断点找到，发现了一根其他线程直接清理了gcls指向的那一块内存。</p>
+<h3 id="答案"><a href="#答案" class="headerlink" title="答案"></a>答案</h3><p>两根线程竞态关系，线程1清理了gcls的内存，线程2却直接访问了被清理的内存，导致rax取值错误引发异常崩溃。</p>
+
+        
+            <div class="donate-container">
+    <div class="donate-button">
+        <button id="donate-button">赞赏</button>
+    </div>
+    <div class="donate-img-container hide" id="donate-img-container">
+        <img id="donate-img" src="" data-src="/img/alipay.jpg">
+        <p> 感谢鼓励 </p>
+    </div>
+</div>
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+
+        <div id="lv-container">
+        </div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span>/</span>
+        
+        <span><a href="#">It helps SEO</a></span>
+        <span>/</span>
+        
+    </p>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+        */
+        if( '' || '')
+        var disqus_config = function () {
+            this.page.url = '';  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = ''; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://smallb.github.io/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+
+
+
+</html>
